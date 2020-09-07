@@ -7,34 +7,83 @@ class Product {
   }
 }
 
+class ShoppingCart {
+  items = []
+  render(){
+    const cartEl = document.createElement('section')
+    cartEl.innerHTML = `
+      <h2>Total: \$${0}</h2>
+      <button>Order Now!</button>
+    `
 
-const productLists = {
-  products: [
-    new Product('A pilow','./assets/images/pillow.jpg',19.99, 'A soft pillow'),
-    new Product('A Carpet','./assets/images/carpet.jpeg',89.99,'A carpet which you might like or not')
-  ],
+    cartEl.className = 'cart'
+    return cartEl
+  }
+}
 
-  render() {
+class ProductItem{
+  constructor(product){
+    this.product = product
+  }
+
+  addToCart(){
+    const cartEl = new ShoppingCart()
     const renderHook = document.getElementById('app')
-    const prodtList = document.createElement('ul')
-    prodtList.classList = 'product-list'
-    for(const prod of this.products){
-      const prodEl = document.createElement('li')
+    renderHook.append(cartEl)
+  }
+
+  render(){
+    const prodEl = document.createElement('li')
       prodEl.className = 'product-item'
       prodEl.innerHTML = `
         <div>
-          <img src="${prod.imageUrl}" alt="${prod.title}">
+          <img src="${this.product.imageUrl}" alt="${this.product.title}">
           <div class="product-item__content">
-            <h2>\$${prod.price}</h2>
-            <p>${prod.description}</p>
+            <h2>\$${this.product.price}</h2>
+            <p>${this.product.description}</p>
             <button>Add to Cart</button>
           </div>
         </div>
       `
-      prodtList.append(prodEl)
+    const addCartBtn = prodEl.querySelector('button')
+    addCartBtn.addEventListener('click', this.addToCart.bind(this))
+    return prodEl
+  }
+
+}
+
+class ProductLists{
+  products =  [
+    new Product('A pilow','./assets/images/pillow.jpg',19.99, 'A soft pillow'),
+    new Product('A Carpet','./assets/images/carpet.jpeg',89.99,'A carpet which you might like or not')
+  ]
+
+  render() {
+    const prodtList = document.createElement('ul')
+    prodtList.classList = 'product-list'
+    for(const prod of this.products){
+      const productItem = new ProductItem(prod)
+      prodtList.append(productItem.render())
     }
-    renderHook.append(prodtList)
+    return prodtList
   }
 }
 
-productLists.render()
+class Shop {
+  render(){
+    const renderHook = document.getElementById('app')
+
+    const cart = new ShoppingCart()
+    const cartEl = cart.render()
+    const prodList = new ProductLists()
+    const prodListEl = prodList.render()
+
+    renderHook.append(cartEl)
+    renderHook.append(prodListEl)
+    
+  }
+}
+
+
+const shop = new Shop
+shop.render()
